@@ -31,7 +31,7 @@ namespace WSCanales.Controllers
                         long newid = id + 1;
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1205";
-                        string origen = "WERSERVICE";
+                        string origen = "SISCOA WEB";
                         exquery("INSERT INTO [COLCANAL]([ID],[numeroCuenta],[numeroComprobante],[motivoContable],[montoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN])VALUES(" + newid + ",'" + numeroCuenta + "','" + numeroComprobante + "','" + motivoContable + "','" + montoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
@@ -92,7 +92,7 @@ namespace WSCanales.Controllers
                         long newid = id + 1;
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1500";
-                        string origen = "WERSERVICE";
+                        string origen = "SISCOA WEB";
                         exquery("INSERT INTO [COLCANAL]([ID],[numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN])VALUES(" + newid + ",'" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
@@ -152,7 +152,7 @@ namespace WSCanales.Controllers
                         long newid = id + 1;
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1901";
-                        string origen = "WERSERVICE";
+                        string origen = "SISCOA WEB";
                         exquery("INSERT INTO [COLCANAL]([ID],[numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN])VALUES(" + newid + ",'" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
@@ -212,7 +212,7 @@ namespace WSCanales.Controllers
                         long newid = id + 1;
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1902";
-                        string origen = "WERSERVICE";
+                        string origen = "SISCOA WEB";
                         exquery("INSERT INTO [COLCANAL]([ID],[numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[transaccionCredito],[cuentaCredito],[comisionCredito],[fechaRegistro],[tipoTransaccion],[ORIGEN])VALUES(" + newid + ",'" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + transaccionCredito + "','" + cuentaCredito + "','" + comisionCredito + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
