@@ -303,7 +303,7 @@ namespace WSCanales.Controllers
 
         public class CanalesElectronicos
         {
-            public long ID { get; set; }
+            public int ID { get; set; }
             public string numeroCuenta { get; set; }
             public string numeroComprobante { get; set; }
             public string motivoContable { get; set; }
@@ -324,7 +324,7 @@ namespace WSCanales.Controllers
             using (var db = new SqlConnection("data source=COA-LACT\\SQLSERVER2014;initial catalog=CanalesElectronicos;integrated security=True;MultipleActiveResultSets=True;"))
             {
                 db.Open();
-                var query = "SELECT codigoError,mensajeCola,saldoContable,saldoDisponible FROM COLCANAL where LLAVE="+llave;
+                var query = "SELECT codigoError,mensajeCola,saldoContable,saldoDisponible FROM COLCANAL where LLAVE='"+llave+"'";
                 using (SqlCommand command = new SqlCommand(query, db))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
