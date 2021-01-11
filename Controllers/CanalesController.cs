@@ -1,62 +1,61 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.ServiceProcess;
-using System.Diagnostics;
-using System.Threading;
-using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
-using System.Timers;
+
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WSCanales.Controllers
 {
-    
-    
-    public class CanalesController : Controller
-    {
 
+    public class CanalesController : ControllerBase
+    {
         [Route("api/Canales/1/{tipoRespuesta}/{numeroCuenta}/{numeroComprobante}/{motivoContable}/{montoComision}")]
-        public ActionResult GetFactura(string tipoRespuesta,string numeroCuenta, string numeroComprobante, string motivoContable, string montoComision)
+        public ActionResult GetFactura(string tipoRespuesta, string numeroCuenta, string numeroComprobante, string motivoContable, string montoComision)
         {
             try
             {
-                string respuestaXml="";
+                string respuestaXml = "";
                 List<CanalesElectronicos> respuestaJson = new List<CanalesElectronicos>();
-                if (tipoRespuesta=="1") {
+                if (tipoRespuesta == "1")
+                {
                     if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && montoComision != null)
                     {
-                        
-                        
+
+
                         DateTime fecha = DateTime.Now;
-                        string llave = numeroCuenta + fecha.ToString("hhmmssfff")+numeroComprobante;
+                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante;
                         string tipoTransaccion = "1205";
                         string origen = "SISCOA WEB";
-                        exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[montoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "','" + motivoContable + "','" + montoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                        exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[montoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "','" + motivoContable + "','" + montoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                         datos = CONSULTA(llave);
                         while (datos.Count == 0)
                         {
                             datos = CONSULTA(llave);
+
+
                         }
                         var consulta = (from c in datos
                                         select c).SingleOrDefault();
 
-                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12,'0') + consulta.saldoDisponible.ToString().PadLeft(12, '0');
+                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12, '0') + consulta.saldoDisponible.ToString().PadLeft(12, '0');
                     }
                     return Ok(respuestaXml);
                 }
                 if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && montoComision != null)
                 {
-                   
+
                     DateTime fecha = DateTime.Now;
                     string tipoTransaccion = "1205";
-                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                    
+                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                     string origen = "WERSERVICE";
-                    exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[montoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "','" + motivoContable + "','" + montoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                    exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[montoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "','" + motivoContable + "','" + montoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                     List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                     datos = CONSULTA(llave);
@@ -80,7 +79,7 @@ namespace WSCanales.Controllers
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         [Route("api/Canales/2/{tipoRespuesta}/{numeroCuenta}/{numeroComprobante}/{motivoContable}/{monto}/{montoComision}/{motivoComision}")]
-        public ActionResult GetDebito(string tipoRespuesta,string numeroCuenta, string numeroComprobante, string motivoContable, string monto, string montoComision, string motivoComision)
+        public ActionResult GetDebito(string tipoRespuesta, string numeroCuenta, string numeroComprobante, string motivoContable, string monto, string montoComision, string motivoComision)
         {
             try
             {
@@ -90,13 +89,13 @@ namespace WSCanales.Controllers
                 {
                     if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
                     {
-                       
+
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1500";
-                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                       
+                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                         string origen = "SISCOA WEB";
-                        exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                        exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                         datos = CONSULTA(llave);
@@ -107,23 +106,23 @@ namespace WSCanales.Controllers
                         var consulta = (from c in datos
                                         select c).SingleOrDefault();
 
-                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12,'0') + consulta.saldoDisponible.ToString().PadLeft(12,'0');
+                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12, '0') + consulta.saldoDisponible.ToString().PadLeft(12, '0');
                     }
                     return Ok(respuestaXml);
                 }
-                    if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
+                if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
                 {
 
                     DateTime fecha = DateTime.Now;
                     string tipoTransaccion = "1500";
-                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                    
+                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                     string origen = "WERSERVICE";
-                    exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                    exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                     List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
-                   datos = CONSULTA(llave);
-                   while(datos.Count==0)
+                    datos = CONSULTA(llave);
+                    while (datos.Count == 0)
                     {
                         datos = CONSULTA(llave);
                     }
@@ -139,8 +138,8 @@ namespace WSCanales.Controllers
                 return BadRequest(ex);
             }
         }
-        
-       //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
         [Route("api/Canales/3/{tipoRespuesta}/{numeroCuenta}/{numeroComprobante}/{motivoContable}/{monto}/{montoComision}/{motivoComision}")]
         public ActionResult GetCredito(string tipoRespuesta, string numeroCuenta, string numeroComprobante, string motivoContable, string monto, string montoComision, string motivoComision)
         {
@@ -152,13 +151,13 @@ namespace WSCanales.Controllers
                 {
                     if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
                     {
-                      
+
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1901";
-                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                        
+                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                         string origen = "SISCOA WEB";
-                        exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                        exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                         datos = CONSULTA(llave);
@@ -169,19 +168,19 @@ namespace WSCanales.Controllers
                         var consulta = (from c in datos
                                         select c).SingleOrDefault();
 
-                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12,'0') + consulta.saldoDisponible.ToString().PadLeft(12,'0');
+                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12, '0') + consulta.saldoDisponible.ToString().PadLeft(12, '0');
                     }
                     return Ok(respuestaXml);
                 }
-                    if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
+                if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null)
                 {
-                    
+
                     DateTime fecha = DateTime.Now;
                     string tipoTransaccion = "1901";
-                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                    
+                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                     string origen = "WERSERVICE";
-                    exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                    exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                     List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                     datos = CONSULTA(llave);
@@ -204,7 +203,7 @@ namespace WSCanales.Controllers
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         [Route("api/Canales/4/{tipoRespuesta}/{numeroCuenta}/{numeroComprobante}/{motivoContable}/{monto}/{montoComision}/{motivoComision}/{transaccionCredito}/{cuentaCredito}/{comisionCredito}")]
-        public ActionResult GetTransaccion(string tipoRespuesta,string numeroCuenta, string numeroComprobante, string motivoContable, string monto, string montoComision, string motivoComision, string transaccionCredito, string cuentaCredito, string comisionCredito)
+        public ActionResult GetTransaccion(string tipoRespuesta, string numeroCuenta, string numeroComprobante, string motivoContable, string monto, string montoComision, string motivoComision, string transaccionCredito, string cuentaCredito, string comisionCredito)
         {
             try
             {
@@ -214,13 +213,13 @@ namespace WSCanales.Controllers
                 {
                     if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null && transaccionCredito != null && cuentaCredito != null && comisionCredito != null)
                     {
-                        
+
                         DateTime fecha = DateTime.Now;
                         string tipoTransaccion = "1902";
-                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
-                       
+                        string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
+
                         string origen = "SISCOA WEB";
-                        exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[transaccionCredito],[cuentaCredito],[comisionCredito],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + transaccionCredito + "','" + cuentaCredito + "','" + comisionCredito + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                        exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[transaccionCredito],[cuentaCredito],[comisionCredito],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + transaccionCredito + "','" + cuentaCredito + "','" + comisionCredito + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                         List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                         datos = CONSULTA(llave);
@@ -231,18 +230,18 @@ namespace WSCanales.Controllers
                         var consulta = (from c in datos
                                         select c).SingleOrDefault();
 
-                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12,'0') + consulta.saldoDisponible.ToString().PadLeft(12,'0');
+                        respuestaXml = consulta.codigoError + consulta.mensajeCola + consulta.saldoContable.ToString().PadLeft(12, '0') + consulta.saldoDisponible.ToString().PadLeft(12, '0');
                     }
                     return Ok(respuestaXml);
                 }
-                    if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null && transaccionCredito != null && cuentaCredito != null && comisionCredito != null)
+                if (numeroCuenta != null && numeroComprobante != null && motivoContable != null && monto != null && montoComision != null && motivoComision != null && transaccionCredito != null && cuentaCredito != null && comisionCredito != null)
                 {
-                    
+
                     DateTime fecha = DateTime.Now;
                     string tipoTransaccion = "1902";
-                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") +numeroComprobante+ tipoTransaccion;
+                    string llave = numeroCuenta + fecha.ToString("hhmmssfff") + numeroComprobante + tipoTransaccion;
                     string origen = "WERSERVICE";
-                    exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[transaccionCredito],[cuentaCredito],[comisionCredito],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" +numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + transaccionCredito + "','" + cuentaCredito + "','" + comisionCredito + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
+                    exquery("INSERT INTO [colasCanales]( [numeroCuenta],[numeroComprobante],[motivoContable],[MONTO],[montoComision],[motivoComision],[transaccionCredito],[cuentaCredito],[comisionCredito],[tipoTransaccion],[ORIGEN],[LLAVE])VALUES( '" + numeroCuenta + "','" + numeroComprobante + "'," + motivoContable + ",'" + monto + "','" + montoComision + "','" + motivoComision + "','" + transaccionCredito + "','" + cuentaCredito + "','" + comisionCredito + "','" + tipoTransaccion + "','" + origen + "','" + llave + "')");
                     List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                     datos = CONSULTA(llave);
@@ -272,15 +271,15 @@ namespace WSCanales.Controllers
                 List<CanalesElectronicos> respuesta = new List<CanalesElectronicos>();
                 if (numeroPrestamo != null && monto != null && cuentaDebito != null && motivoDebito != null)
                 {
-                   
+
                     DateTime fecha = DateTime.Now;
-                    
+
                     string tipoTransaccion = "3500";
                     string transaccionPagoPrestamo = "3501";
-                    string llave = numeroPrestamo + fecha.ToString("hhmmssfff") + tipoTransaccion+transaccionPagoPrestamo;
+                    string llave = numeroPrestamo + fecha.ToString("hhmmssfff") + tipoTransaccion + transaccionPagoPrestamo;
                     string origen = "WERSERVICE";
-                    exquery("INSERT INTO [COLCANAL]( [numeroCuenta],[motivoContable],[monto],[fechaRegistro],[tipoTransaccion],[ORIGEN],[LLAVE],[numeroPrestamo],[transaccionPagoPrestamo])" +
-                        "VALUES( '" + cuentaDebito + "','" + motivoDebito + "','" + monto + "','" + fecha + "','" + tipoTransaccion + "','" + origen + "','" + llave + "','" + numeroPrestamo + "','" + transaccionPagoPrestamo + "')");
+                    exquery("INSERT INTO [colasCanales]( [numeroCuenta],[motivoContable],[monto],[tipoTransaccion],[ORIGEN],[LLAVE],[numeroPrestamo],[transaccionPagoPrestamo])" +
+                        "VALUES( '" + cuentaDebito + "','" + motivoDebito + "','" + monto + "','" + tipoTransaccion + "','" + origen + "','" + llave + "','" + numeroPrestamo + "','" + transaccionPagoPrestamo + "')");
                     List<CanalesElectronicos> datos = new List<CanalesElectronicos>();
 
                     datos = CONSULTA(llave);
@@ -321,49 +320,76 @@ namespace WSCanales.Controllers
         public List<CanalesElectronicos> CONSULTA(string llave)
         {
             List<CanalesElectronicos> respuesta = new List<CanalesElectronicos>();
-            using (var db = new SqlConnection("data source=COA-LACT\\SQLSERVER2014;initial catalog=CanalesElectronicos;integrated security=True;MultipleActiveResultSets=True;"))
+            try
             {
-                db.Open();
-                var query = "SELECT codigoError,mensajeCola,saldoContable,saldoDisponible FROM COLCANAL where LLAVE='"+llave+"'";
-                using (SqlCommand command = new SqlCommand(query, db))
+                using (var db = new SqlConnection("Data Source = DESA-CANAL02\\COABANK02; Initial Catalog = canalesElectronicos; User ID=sa;Password=Coabank2020*;"))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    db.Open();
+                    var query = "SELECT codigoError,mensajeCola,saldoContable,saldoDisponible FROM colasCanales where LLAVE='" + llave + "'";
+                    using (SqlCommand command = new SqlCommand(query, db))
                     {
-                        while (reader.Read())
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            if (!reader.IsDBNull(0)) { 
-                            respuesta.Add(new CanalesElectronicos()
+                            while (reader.Read())
                             {
-                                codigoError = reader.GetString(0),
-                                mensajeCola = reader.GetString(1),
-                                saldoContable = reader.GetDecimal(2),
-                                saldoDisponible= reader.GetDecimal(3)
+                                if (!reader.IsDBNull(0))
+                                {
+                                    respuesta.Add(new CanalesElectronicos()
+                                    {
+                                        codigoError = reader.GetString(0),
+                                        mensajeCola = reader.GetString(1),
+                                        saldoContable = reader.GetDecimal(2),
+                                        saldoDisponible = reader.GetDecimal(3)
 
-                            });
+                                    });
+                                }
                             }
                         }
                     }
-                }
 
+                }
             }
+            catch (Exception e)
+            {
+                respuesta.Add(new CanalesElectronicos()
+                {
+                    codigoError = e.ToString(),
+                    mensajeCola = "1",
+                    saldoContable = 2,
+                    saldoDisponible = 3
+
+                });
+                return respuesta;
+            }
+
 
             return respuesta;
         }
 
-        public void exquery(string sql)
+        public string exquery(string sql)
         {
 
-            using (var db = new SqlConnection("data source=COA-LACT\\SQLSERVER2014;initial catalog=CanalesElectronicos;integrated security=True;MultipleActiveResultSets=True;"))
+            try
             {
-                db.Open();
-                var query = sql;
-                using (SqlCommand command = new SqlCommand(query, db))
+                using (var db = new SqlConnection("Data Source = DESA-CANAL02\\COABANK02; Initial Catalog = canalesElectronicos; User ID=sa;Password=Coabank2020*;"))
                 {
-                    command.ExecuteNonQuery();
+                    db.Open();
+                    var query = sql;
+                    using (SqlCommand command = new SqlCommand(query, db))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
                 }
-
+                return "OK";
             }
-        }
+            catch (Exception e)
+            {
 
+                return e.ToString();
+            }
+
+
+        }
     }
 }
